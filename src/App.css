@@ -43,5 +43,6 @@
   right: 0px;
   top: 0px;
   position: fixed;
-  background: lightgray;
+  background: rgb(230, 230, 230);
+  border-left: 1px solid gray;
 }
