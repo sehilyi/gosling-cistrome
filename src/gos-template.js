@@ -6,11 +6,12 @@ export const getSpec = ({ cid, width = 2000, height = 500 }) => {
   const bw = `http://dc2.cistrome.org/genome_browser/bw/${cid}_treat.bw`;
 
   return {
-    title: "Cistrome Browser",
+    title: "Explore Cistrome Data Using Gosling.js",
     subtitle: `Cistrome ID: ${cid}`,
     spacing: 50,
     views: [
       {
+        id: 'overview',
         title: "Ideogram",
         xDomain: { chromosome: "3" },
         layout: "linear",
@@ -25,9 +26,7 @@ export const getSpec = ({ cid, width = 2000, height = 500 }) => {
         tracks: [
           {
             mark: "text",
-            dataTransform: {
-              filter: [{ field: "Stain", oneOf: ["acen"], not: true }],
-            },
+            dataTransform: [{ type: 'filter', field: "Stain", oneOf: ["acen"], not: true }],
             text: { field: "Name", type: "nominal" },
             color: {
               field: "Stain",
@@ -48,9 +47,7 @@ export const getSpec = ({ cid, width = 2000, height = 500 }) => {
           },
           {
             mark: "rect",
-            dataTransform: {
-              filter: [{ field: "Stain", oneOf: ["acen"], not: true }],
-            },
+            dataTransform: [{ type: 'filter', field: "Stain", oneOf: ["acen"], not: true }],
             color: {
               field: "Stain",
               type: "nominal",
@@ -67,28 +64,26 @@ export const getSpec = ({ cid, width = 2000, height = 500 }) => {
           },
           {
             mark: "triangleRight",
-            dataTransform: {
-              filter: [
-                { field: "Stain", oneOf: ["acen"] },
-                { field: "Name", include: "q" },
+            dataTransform: [
+                { type: 'filter', field: "Stain", oneOf: ["acen"] },
+                { type: 'filter', field: "Name", include: "q" },
               ],
-            },
             color: { value: "#B40101" },
           },
           {
             mark: "triangleLeft",
-            dataTransform: {
-              filter: [
-                { field: "Stain", oneOf: ["acen"] },
-                { field: "Name", include: "p" },
-              ],
-            },
+            dataTransform: [
+                { type: 'filter', field: "Stain", oneOf: ["acen"] },
+                { type: 'filter', field: "Name", include: "p" },
+            ],
             color: { value: "#B40101" },
           },
           {
             mark: "brush",
             x: { linkingId: "detail" },
-            color: { value: "red" },
+            color: { value: "#D34B6C" },
+            stroke: {value: 'red'},
+            strokeWidth: {value: 2}
           },
         ],
         x: { field: "chromStart", type: "genomic" },
@@ -104,6 +99,7 @@ export const getSpec = ({ cid, width = 2000, height = 500 }) => {
         linkingId: "detail",
         tracks: [
           {
+            id: 'detail-view',
             alignment: "overlay",
             title: "hg38 | Genes",
             data: {
@@ -125,20 +121,16 @@ export const getSpec = ({ cid, width = 2000, height = 500 }) => {
             },
             tracks: [
               {
-                dataTransform: {
-                  filter: [
-                    { field: "type", oneOf: ["gene"] },
-                    { field: "strand", oneOf: ["+"] },
+                dataTransform: [
+                    {type: 'filter', field: "type", oneOf: ["gene"] },
+                    {type: 'filter', field: "strand", oneOf: ["+"] },
                   ],
-                },
                 mark: "triangleRight",
                 x: { field: "end", type: "genomic", axis: "top" },
                 size: { value: 15 },
               },
               {
-                dataTransform: {
-                  filter: [{ field: "type", oneOf: ["gene"] }],
-                },
+                dataTransform: [{type: 'filter', field: "type", oneOf: ["gene"] }],
                 mark: "text",
                 text: { field: "name", type: "nominal" },
                 x: { field: "start", type: "genomic" },
@@ -146,55 +138,47 @@ export const getSpec = ({ cid, width = 2000, height = 500 }) => {
                 style: { dy: -15, outline: "black" },
               },
               {
-                dataTransform: {
-                  filter: [
-                    { field: "type", oneOf: ["gene"] },
-                    { field: "strand", oneOf: ["-"] },
+                dataTransform: [
+                    { type: 'filter', field: "type", oneOf: ["gene"] },
+                    { type: 'filter', field: "strand", oneOf: ["-"] },
                   ],
-                },
                 mark: "triangleLeft",
                 x: { field: "start", type: "genomic" },
                 size: { value: 15 },
                 style: { align: "right", outline: "black" },
               },
               {
-                dataTransform: {
-                  filter: [{ field: "type", oneOf: ["exon"] }],
-                },
+                dataTransform: [{ type: 'filter',field: "type", oneOf: ["exon"] }],
                 mark: "rect",
                 x: { field: "start", type: "genomic" },
                 size: { value: 15 },
                 xe: { field: "end", type: "genomic" },
               },
               {
-                dataTransform: {
-                  filter: [
-                    { field: "type", oneOf: ["gene"] },
-                    { field: "strand", oneOf: ["+"] },
+                dataTransform: [
+                    { type: 'filter',field: "type", oneOf: ["gene"] },
+                    { type: 'filter',field: "strand", oneOf: ["+"] },
                   ],
-                },
                 mark: "rule",
                 x: { field: "start", type: "genomic" },
-                strokeWidth: { value: 3 },
+                strokeWidth: { value: 2 },
                 xe: { field: "end", type: "genomic" },
                 style: {
-                  linePattern: { type: "triangleRight", size: 5 },
+                  linePattern: { type: "triangleRight", size: 3.5 },
                   outline: "black",
                 },
               },
               {
-                dataTransform: {
-                  filter: [
-                    { field: "type", oneOf: ["gene"] },
-                    { field: "strand", oneOf: ["-"] },
-                  ],
-                },
+                dataTransform: [
+                    { type: 'filter',field: "type", oneOf: ["gene"] },
+                    { type: 'filter',field: "strand", oneOf: ["-"] },
+                ],
                 mark: "rule",
                 x: { field: "start", type: "genomic" },
-                strokeWidth: { value: 3 },
+                strokeWidth: { value: 2 },
                 xe: { field: "end", type: "genomic" },
                 style: {
-                  linePattern: { type: "triangleLeft", size: 5 },
+                  linePattern: { type: "triangleLeft", size: 3.5 },
                   outline: "black",
                 },
               },
@@ -216,7 +200,7 @@ export const getSpec = ({ cid, width = 2000, height = 500 }) => {
               },
             ],
             opacity: { value: 0.8 },
-            style: { background: "#FAFAFA" },
+            style: { background: "white" },
             width: 350,
             height: 100,
           },
@@ -237,49 +221,41 @@ export const getSpec = ({ cid, width = 2000, height = 500 }) => {
                 { index: 3, name: "name", type: "nominal" },
               ],
             },
-            dataTransform: {
-              displace: [
+            dataTransform: [
                 {
-                  type: "pile",
+                  type: 'displace',
+                  method: "pile",
                   boundingBox: { startField: "start", endField: "end" },
                   newField: "row",
                   maxRows: 15,
-                },
-              ],
-              filter: [{ field: "type", oneOf: ["gene"] }],
-            },
+                },{type: 'filter', field: "type", oneOf: ["gene"] }],
             tracks: [
               {
-                dataTransform: {
-                  displace: [
+                dataTransform: [
                     {
-                      type: "pile",
+                      type: 'displace',
+                      method: "pile",
                       boundingBox: { startField: "start", endField: "end" },
                       newField: "row",
                       maxRows: 15,
                     },
+                  
+                    {type: 'filter', field: "type", oneOf: ["gene"] },
+                    {type: 'filter', field: "strand", oneOf: ["+"] },
                   ],
-                  filter: [
-                    { field: "type", oneOf: ["gene"] },
-                    { field: "strand", oneOf: ["+"] },
-                  ],
-                },
                 mark: "triangleRight",
                 x: { field: "end", type: "genomic" },
                 size: { value: 15 },
               },
               {
-                dataTransform: {
-                  displace: [
+                dataTransform: [
                     {
-                      type: "pile",
+                      type: 'displace',
+                      method: "pile",
                       boundingBox: { startField: "start", endField: "end" },
                       newField: "row",
                       maxRows: 15,
-                    },
-                  ],
-                  filter: [{ field: "type", oneOf: ["gene"] }],
-                },
+                    },{ type: 'filter', field: "type", oneOf: ["gene"] }],
                 mark: "text",
                 text: { field: "name", type: "nominal" },
                 x: { field: "start", type: "genomic" },
@@ -287,86 +263,76 @@ export const getSpec = ({ cid, width = 2000, height = 500 }) => {
                 style: { dy: -10, outline: "black" },
               },
               {
-                dataTransform: {
-                  displace: [
+                dataTransform: [
                     {
-                      type: "pile",
+                      type: 'displace',
+                      method: "pile",
                       boundingBox: { startField: "start", endField: "end" },
                       newField: "row",
                       maxRows: 15,
                     },
+                  
+                    { type: 'filter', field: "type", oneOf: ["gene"] },
+                    { type: 'filter', field: "strand", oneOf: ["-"] },
                   ],
-                  filter: [
-                    { field: "type", oneOf: ["gene"] },
-                    { field: "strand", oneOf: ["-"] },
-                  ],
-                },
                 mark: "triangleLeft",
                 x: { field: "start", type: "genomic" },
                 size: { value: 15 },
                 style: { align: "right", outline: "black" },
               },
               {
-                dataTransform: {
-                  displace: [
+                dataTransform: [
                     {
-                      type: "pile",
+                      type: 'displace',
+                      method: "pile",
                       boundingBox: { startField: "start", endField: "end" },
                       newField: "row",
                       maxRows: 15,
                     },
-                  ],
-                  filter: [{ field: "type", oneOf: ["exon"] }],
-                },
+                    { type: 'filter', field: "type", oneOf: ["exon"] }],
                 mark: "rect",
                 x: { field: "start", type: "genomic" },
                 xe: { field: "end", type: "genomic" },
               },
               {
-                dataTransform: {
-                  displace: [
+                dataTransform: [
                     {
-                      type: "pile",
+                      type: 'displace',
+                      method: "pile",
                       boundingBox: { startField: "start", endField: "end" },
                       newField: "row",
                       maxRows: 15,
                     },
+                    { type: 'filter', field: "type", oneOf: ["gene"] },
+                    { type: 'filter', field: "strand", oneOf: ["+"] },
                   ],
-                  filter: [
-                    { field: "type", oneOf: ["gene"] },
-                    { field: "strand", oneOf: ["+"] },
-                  ],
-                },
                 mark: "rule",
                 x: { field: "start", type: "genomic" },
-                strokeWidth: { value: 3 },
+                strokeWidth: { value: 2 },
                 xe: { field: "end", type: "genomic" },
                 style: {
-                  linePattern: { type: "triangleRight", size: 5 },
+                  linePattern: { type: "triangleRight", size: 3.5 },
                   outline: "black",
                 },
               },
               {
-                dataTransform: {
-                  displace: [
+                dataTransform: [
                     {
-                      type: "pile",
+                      type: 'displace',
+                      method: "pile",
                       boundingBox: { startField: "start", endField: "end" },
                       newField: "row",
                       maxRows: 15,
                     },
+                    { type: 'filter', field: "type", oneOf: ["gene"] },
+                    { type: 'filter', field: "strand", oneOf: ["-"] }
                   ],
-                  filter: [
-                    { field: "type", oneOf: ["gene"] },
-                    { field: "strand", oneOf: ["-"] },
-                  ],
-                },
                 mark: "rule",
                 x: { field: "start", type: "genomic" },
-                strokeWidth: { value: 3 },
+                strokeWidth: { value: 2 },
                 xe: { field: "end", type: "genomic" },
                 style: {
-                  linePattern: { type: "triangleRight", size: 5 },
+                  linePattern: { type: "triangleRight", size: 3.5 },
                   outline: "black",
                 },
               },
@@ -388,7 +354,7 @@ export const getSpec = ({ cid, width = 2000, height = 500 }) => {
               },
             ],
             opacity: { value: 0.8 },
-            style: { outline: "black", background: "#FAFAFA" },
+            style: { outline: "black", background: "white" },
             width,
             height,
           },
@@ -404,7 +370,7 @@ export const getSpec = ({ cid, width = 2000, height = 500 }) => {
               type: "bigwig",
               column: "position",
               value: "peak",
-              binSize: 8,
+              // binSize: 8,
             },
             title: "Cistrome ID: " + cid,
             mark: "bar",
@@ -412,7 +378,7 @@ export const getSpec = ({ cid, width = 2000, height = 500 }) => {
             xe: { field: "end", type: "genomic", axis: "none" },
             y: { field: "peak", type: "quantitative" },
             color: { value: plusColor },
-            style: { outline: "white" },
+            style: { outline: "gray" },
             // opacity: { value: 0.6 },
             width,
             height: 40,
