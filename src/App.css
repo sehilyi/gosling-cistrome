@@ -36,3 +36,12 @@
     transform: rotate(360deg);
   }
 }
+
+.gene-list {
+  width: 400px;
+  height: 100%;
+  right: 0px;
+  top: 0px;
+  position: fixed;
+  background: lightgray;
+}
