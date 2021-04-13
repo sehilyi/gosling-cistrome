@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.css": "/gosling-cistrome/static/css/main.124a70a9.chunk.css",
-    "main.js": "/gosling-cistrome/static/js/main.f5584342.chunk.js",
-    "main.js.map": "/gosling-cistrome/static/js/main.f5584342.chunk.js.map",
+    "main.css": "/gosling-cistrome/static/css/main.99d28cc9.chunk.css",
+    "main.js": "/gosling-cistrome/static/js/main.c9335f95.chunk.js",
+    "main.js.map": "/gosling-cistrome/static/js/main.c9335f95.chunk.js.map",
     "runtime-main.js": "/gosling-cistrome/static/js/runtime-main.1c25607a.js",
     "runtime-main.js.map": "/gosling-cistrome/static/js/runtime-main.1c25607a.js.map",
-    "static/js/2.9e344e26.chunk.js": "/gosling-cistrome/static/js/2.9e344e26.chunk.js",
-    "static/js/2.9e344e26.chunk.js.map": "/gosling-cistrome/static/js/2.9e344e26.chunk.js.map",
+    "static/js/2.06b3b075.chunk.js": "/gosling-cistrome/static/js/2.06b3b075.chunk.js",
+    "static/js/2.06b3b075.chunk.js.map": "/gosling-cistrome/static/js/2.06b3b075.chunk.js.map",
     "index.html": "/gosling-cistrome/index.html",
-    "static/css/main.124a70a9.chunk.css.map": "/gosling-cistrome/static/css/main.124a70a9.chunk.css.map",
-    "static/js/2.9e344e26.chunk.js.LICENSE.txt": "/gosling-cistrome/static/js/2.9e344e26.chunk.js.LICENSE.txt"
+    "static/css/main.99d28cc9.chunk.css.map": "/gosling-cistrome/static/css/main.99d28cc9.chunk.css.map",
+    "static/js/2.06b3b075.chunk.js.LICENSE.txt": "/gosling-cistrome/static/js/2.06b3b075.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.1c25607a.js",
-    "static/js/2.9e344e26.chunk.js",
-    "static/css/main.124a70a9.chunk.css",
-    "static/js/main.f5584342.chunk.js"
+    "static/js/2.06b3b075.chunk.js",
+    "static/css/main.99d28cc9.chunk.css",
+    "static/js/main.c9335f95.chunk.js"
   ]
 }
