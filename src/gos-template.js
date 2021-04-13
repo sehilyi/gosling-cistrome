@@ -370,7 +370,7 @@ export const getSpec = ({ cid, width = 2000, height = 500 }) => {
               type: "bigwig",
               column: "position",
               value: "peak",
-              // binSize: 8,
+              binSize: 8,
             },
             title: "Cistrome ID: " + cid,
             mark: "bar",

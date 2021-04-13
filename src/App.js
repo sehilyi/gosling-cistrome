@@ -15,10 +15,12 @@ function App(props) {
   // API of gosling.js
   const gosRef = useRef();
 
-  function zoomToGene(gene) {
+  function onZoom(gene, pos) {
     if(!gosRef?.current) return;
 
-    gosRef.current.api.zoomToGene('detail-view', gene, 3000);
+    gosRef.current.api.zoomToGene('detail-view', gene, 1000);
+    gosRef.current.api.zoomTo('overview', pos, 1000);
+
   }
 
   useEffect(() => {
@@ -50,9 +52,9 @@ function App(props) {
         compiled={(spec, vConf) => { /* Callback function when compiled */ }}
       />
       <div className="gene-list">
-        <div className="gene-button" onClick={() => zoomToGene('TP53')}>TP53</div>
-        <div className="gene-button" onClick={() => zoomToGene('TNF')}>TNF</div>
-        <div className="gene-button" onClick={() => zoomToGene('MYC')}>MYC</div>
+        <div className="gene-button" onClick={() => onZoom('TP53', 'chr17')}>TP53</div>
+        <div className="gene-button" onClick={() => onZoom('TNF', 'chr6')}>TNF</div>
+        <div className="gene-button" onClick={() => onZoom('MYC', 'chr8')}>MYC</div>
       </div>
     </>
   );
