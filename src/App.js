@@ -10,7 +10,7 @@ function App(props) {
   // const urlParams = qs.parse(props.location.search, { ignoreQueryPrefix: true });
   // const cid = urlParams?.id; // Cistrome ID
 
-  const defaultKeyword = '1,2,4,6';
+  const defaultKeyword = '1,2,4';
   const [searchKeyword, setSearchKeyword] = useState(defaultKeyword);
 
   // visual parameters
