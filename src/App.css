@@ -37,28 +37,53 @@
   }
 }
 
+.vis {
+  position: fixed;
+  left: 400px;
+  top: 0px;
+}
+
 .gene-list {
   width: 400px;
   height: 100%;
-  right: 0px;
+  left: 0px;
   top: 0px;
   position: fixed;
-  background: rgb(245 245 245);
-  border-left: 1px solid #dadada;
+  background: white;
+  border-right: 1px solid #dadada;
+  padding: 20px;
+}
+
+.search-box {
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+}
+
+.chr-button {
+  padding: 6px;
+  margin: 6px;
+  margin-left: 0px;
+  margin-top: 0px;
+  /* border-radius: 3px; */
+  border: 1px solid gray;
+  background: white;
+  display: inline-block;
+  cursor: pointer;
 }
 
 .gene-button {
   width: 100%;
   height: 30px;
+  line-height: 30px;
   background-color: white;
   border: 1px solid gray;
+  cursor: pointer;
+  margin-bottom: 3px;
+  text-align: center;
 }
 
-.chr-button {
-  padding: 6px;
-  border-radius: 3px;
-  border: 1px solid gray;
-  background: white;
-  margin: 6px;
-  display: inline-block;
+.chr-button:hover,
+.gene-button:hover {
+  background-color: lightgray;
 }
