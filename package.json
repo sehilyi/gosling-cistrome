@@ -1,6 +1,6 @@
 {
   "name": "gosling-cistrome",
-  "homepage": "https://sehilyi.github.io/gosling-cistrome/",
+  "homepage": "http://cisgos.gehlenborglab.org/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -20,7 +20,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "predeploy": "yarn build",
+    "predeploy": "yarn build; echo \"cisgos.gehlenborglab.org\" >> build/CNAME",
     "deploy": "gh-pages -d build"
   },
   "eslintConfig": {

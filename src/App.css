@@ -53,3 +53,12 @@
   background-color: white;
   border: 1px solid gray;
 }
+
+.chr-button {
+  padding: 6px;
+  border-radius: 3px;
+  border: 1px solid gray;
+  background: white;
+  margin: 6px;
+  display: inline-block;
+}

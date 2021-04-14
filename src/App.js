@@ -20,7 +20,13 @@ function App(props) {
 
     gosRef.current.api.zoomToGene('detail-view', gene, 1000);
     gosRef.current.api.zoomTo('overview', pos, 1000);
+  }
 
+  function onZoomChr(chr) {
+    if(!gosRef?.current) return;
+
+    gosRef.current.api.zoomTo('detail-view', chr, 1000);
+    gosRef.current.api.zoomTo('overview', chr, 1000);
   }
 
   useEffect(() => {
@@ -52,6 +58,12 @@ function App(props) {
         compiled={(spec, vConf) => { /* Callback function when compiled */ }}
       />
       <div className="gene-list">
+        <h4>Navigation</h4>
+        <h5>Chromosome</h5>
+        {
+          [...Array.from(Array(22).keys()).map(d => d+1), 'X', 'Y'].map(k => <span className="chr-button" onClick={() => onZoomChr(`chr${k}`)}>{`chr${k}`}</span>)
+        }
+        <h5>Gene</h5>
         <div className="gene-button" onClick={() => onZoom('TP53', 'chr17')}>TP53</div>
         <div className="gene-button" onClick={() => onZoom('TNF', 'chr6')}>TNF</div>
         <div className="gene-button" onClick={() => onZoom('MYC', 'chr8')}>MYC</div>
