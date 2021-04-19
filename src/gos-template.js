@@ -1,6 +1,7 @@
-export const getSpec = ({ cids, width = 2000, height = 500 }) => {
+export const sampleColor = ["#0072B2", "#D45E00", "#029F73", "#E79F00", "#CB7AA7"];
+
+export const getSpec = ({ cids, title, width = 2000, height = 500 }) => {
   // "#0072B2", "#D45E00"
-  const sampleColor = ["#0072B2", "#D45E00", "#029F73", "#E79F00", "#CB7AA7"];
   const plusColor = "#878787"; //"#D34B6C";
   const minusColor = "#878787"; //"#5688B9";
 
@@ -11,7 +12,7 @@ export const getSpec = ({ cids, width = 2000, height = 500 }) => {
   const getBwLink = (cid) =>
     `http://dc2.cistrome.org/genome_browser/bw/${cid}_treat.bw`;
 
-  const getSampleBar = (cid, index, isBrush = false) => {
+  const getSampleBar = (cid, title, index, isBrush = false) => {
     return {
       alignment: "overlay",
       data: {
@@ -21,7 +22,7 @@ export const getSpec = ({ cids, width = 2000, height = 500 }) => {
         value: "peak",
         binSize: 8,
       },
-      title: "Cistrome ID: " + cid,
+      title,
       tracks: isBrush
         ? [
             {},
@@ -49,18 +50,18 @@ export const getSpec = ({ cids, width = 2000, height = 500 }) => {
     };
   };
 
-  console.log(
-    cids,
-    cids.filter((cid) => +cid).map((cid) => getSampleBar(cid))
-  );
+  // console.log(
+  //   cids,
+  //   cids.filter((cid) => +cid).map((cid) => getSampleBar(cid))
+  // );
 
   return {
-    title: "Explore Cistrome Data Using Gosling.js",
-    subtitle: `Cistrome IDs: ${cids.join(", ")}`,
+    // title: "Explore Cistrome Data Using Gosling.js",
+    // subtitle: `Cistrome IDs: ${cids.join(", ")}`,
     spacing: 50,
     views: [
       {
-        xDomain: { chromosome: "3" },
+        xDomain: { chromosome: "7" },
         linkingId: "overview",
         tracks: [
           // ...cids.filter(cid => +cid).map((cid, i) => getSampleBar(cid, i, true)),
@@ -68,7 +69,7 @@ export const getSpec = ({ cids, width = 2000, height = 500 }) => {
             id: "overview",
             linkingId: "overview",
             title: "Ideogram",
-            xDomain: { chromosome: "3" },
+            xDomain: { chromosome: "7" },
             layout: "linear",
             alignment: "overlay",
             data: {
@@ -175,16 +176,16 @@ export const getSpec = ({ cids, width = 2000, height = 500 }) => {
             stroke: { value: "gray" },
             strokeWidth: { value: 0.5 },
             style: { outline: "black", outlineWidth: 1 },
+            size: { value: 25 },
             width,
-            height: 25,
+            height: 45,
           },
         ],
       },
       {
-        xDomain: { chromosome: "3", interval: [142500000, 143000000] },
+        xDomain: { chromosome: "7", interval: [27066839, 27266927] },
         linkingId: "detail",
         tracks: [
-          ...cids.filter((cid) => +cid).map((cid, i) => getSampleBar(cid, i)),
           {
             id: "detail-view",
             alignment: "overlay",
@@ -294,10 +295,9 @@ export const getSpec = ({ cids, width = 2000, height = 500 }) => {
             ],
             opacity: { value: 0.8 },
             style: { background: "#F5F5F5", outlineWidth: 0 },
-            width: 350,
+            width,
             height: 100,
           },
-
           {
             title: "hg38 | GENECODE Transcript (Max. 15 Rows)",
             alignment: "overlay",
@@ -310,8 +310,11 @@ export const getSpec = ({ cids, width = 2000, height = 500 }) => {
                 { index: 2, name: "end" },
               ],
               valueFields: [
+                { index: 0, name: 'chr', type: 'nominal' },
                 { index: 5, name: "strand", type: "nominal" },
                 { index: 3, name: "name", type: "nominal" },
+                {"index": 9, "name": "exon_start", "type": "nominal"},
+                {"index": 10, "name": "exon_end", "type": "nominal"}
               ],
             },
             dataTransform: [
@@ -378,19 +381,39 @@ export const getSpec = ({ cids, width = 2000, height = 500 }) => {
                 style: { align: "right", outline: "black", outlineWidth: 0 },
               },
               {
-                dataTransform: [
+                "dataTransform": [
                   {
-                    type: "displace",
-                    method: "pile",
-                    boundingBox: { startField: "start", endField: "end" },
-                    newField: "row",
-                    maxRows: 15,
+                    "type": "displace",
+                    "method": "pile",
+                    "boundingBox": {"startField": "start", "endField": "end"},
+                    "newField": "row",
+                    "maxRows": 15
                   },
-                  { type: "filter", field: "type", oneOf: ["exon"] },
+                  {
+                    "type": "exonSplit",
+                    "separator": ",",
+                    "flag": {"field": "type", "value": "exon"},
+                    "fields": [
+                      {
+                        "field": "exon_start",
+                        "type": "genomic",
+                        "newField": "start",
+                        "chrField": "chr"
+                      },
+                      {
+                        "field": "exon_end",
+                        "type": "genomic",
+                        "newField": "end",
+                        "chrField": "chr"
+                      }
+                    ]
+                  },
+                  {"type": "filter", "field": "type", "oneOf": ["exon"]}
                 ],
-                mark: "rect",
-                x: { field: "start", type: "genomic" },
-                xe: { field: "end", type: "genomic" },
+                "mark": "rect",
+                "size": {"value": 15},
+                "x": {"field": "start", "type": "genomic"},
+                "xe": {"field": "end", "type": "genomic"}
               },
               {
                 dataTransform: [
@@ -458,6 +481,7 @@ export const getSpec = ({ cids, width = 2000, height = 500 }) => {
             width,
             height,
           },
+          ...cids.filter((cid) => +cid).map((cid, i) => getSampleBar(cid, title, i)),
         ],
       },
     ],
