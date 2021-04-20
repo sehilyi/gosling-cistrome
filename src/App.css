@@ -37,12 +37,28 @@
   }
 }
 
-.vis {
+.vis,
+.vis-overlay {
   position: fixed;
   left: 400px;
   top: 0px;
   height: 100%;
+  width: calc(100% - 800px);
   overflow-y: auto;
+}
+
+.vis-overlay {
+  background: #00000066;
+  color: white;
+  font-size: 24px;
+  font-weight: 500;
+  padding-top: 100px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.vis-overlay-hidden {
+  visibility: collapse;
 }
 
 .gene-list,
@@ -76,10 +92,17 @@ td {
   padding: 5px;
 }
 
-td a:link, 
-td a:visited {
+.gene-list a:link, 
+.gene-list a:visited,
+.metadata-table a:link, 
+.metadata-table a:visited {
   text-decoration: underline dotted #0072B2;
   color: #0072B2;
+}
+
+.sub-info {
+  position: absolute;
+  right: 20px;
 }
 
 .search-box {

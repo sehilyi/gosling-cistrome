@@ -17,11 +17,16 @@ function App(props) {
   const defaultKeyword = "1";
   const [searchKeyword, setSearchKeyword] = useState(defaultKeyword);
 
+  const [naviKeyword, setNaviKeyword] = useState();
+
   // visual parameters
   const [innerWidth, setInnerWidth] = useState(initWidth);
 
   // Metadata
   const [metadata, setMetadata] = useState(undefined);
+
+  // Putative targets
+  const [putativeTargets, setPutativeTargets] = useState(undefined);
 
   // API of gosling.js
   const gosRef = useRef();
@@ -38,6 +43,16 @@ function App(props) {
 
     gosRef.current.api.zoomTo("detail-view", chr, duration);
     gosRef.current.api.zoomTo("overview", chr, duration);
+  }
+
+  function onZoomPos(pos) {
+    if (!gosRef?.current) return;
+
+    if (!pos.includes("chr") || !pos.includes(":") || !pos.includes("-"))
+      return;
+
+    gosRef.current.api.zoomTo("overview", pos.split(":")[0], duration);
+    gosRef.current.api.zoomTo("detail-view", pos, duration);
   }
 
   useEffect(() => {
@@ -68,23 +83,56 @@ function App(props) {
         return response.json();
       })
       .then((data) => {
-        console.log(data);
+        // console.log(data);
         setMetadata(data);
       })
       .catch((error) => {
         console.warn(error);
+      });
+  };
+
+  const fetchPutativeTargets = (cid) => {
+    fetch(`http://dc2.cistrome.org/api/putative_target_ng?gene=&id=${cid}`)
+      .then((response) => {
+        if (!response.ok) {
+          console.log(`Error: ${response.statusText}`);
+        }
+        return response.json();
       })
+      .then((data) => {
+        // console.log('putativeTargets', data);
+        setPutativeTargets(data);
+      })
+      .catch((error) => {
+        console.warn(error);
+      });
   };
 
   useEffect(() => {
     // const cids = searchKeyword.split(",");
     if (+searchKeyword) {
       inspector(searchKeyword);
+      fetchPutativeTargets(searchKeyword);
     }
   }, [searchKeyword]);
 
+  useEffect(() => {
+    if (!naviKeyword) return;
+
+    // if(naviKeyword.includes('chr')) {
+    onZoomPos(naviKeyword);
+    // } else {
+    // onZoom(naviKeyword);
+    // }
+  }, [naviKeyword]);
+
   const getTitle = (meta) => {
-    return [meta?.id, meta?.treats[0]?.name, meta?.treats[0]?.cell_line__name, meta?.treats[0]?.cell_type__name].join(' | ');
+    return [
+      meta?.id,
+      meta?.treats[0]?.name,
+      meta?.treats[0]?.cell_line__name,
+      meta?.treats[0]?.cell_type__name,
+    ].join(" | ");
   };
 
   const newSpec = useMemo(() => {
@@ -112,6 +160,15 @@ function App(props) {
           }}
         />
       </div>
+      <div
+        className={
+          metadata?.treats?.[0]?.species__name === "Mus musculus"
+            ? "vis-overlay"
+            : "vis-overlay-hidden"
+        }
+      >
+        {"Mouse Genome Is Not Supported Yet"}
+      </div>
       <div className="gene-list">
         <h5>Cistrome ID</h5>
         <input
@@ -121,29 +178,57 @@ function App(props) {
           defaultValue={defaultKeyword}
           name="default name"
           placeholder={`Cistrome ID (e.g., ${defaultKeyword})`}
-          // value={searchKeyword}
-          onChange={debounce((e) => {
-            setSearchKeyword(e.target.value);
-          }, 1000)}
-          // onKeyDown={(e) => {
-          //     switch(e.key){
-          //         case 'ArrowUp':
-          //             break;
-          //         case 'ArrowDown':
-          //             break;
-          //         case 'Enter':
-          //             setGeneSuggestions([]);
-          //             if(searchKeyword.includes('chr')) {
-          //                 hmRef.current.api.zoomTo(searchKeyword);
-          //             } else {
-          //                 hmRef.current.api.zoomToGene(searchKeyword);
-          //             }
-          //             break;
-          //         case 'Esc':
-          //         case 'Escape':
-          //             break;
-          //     }
-          // }}
+          // onChange={debounce((e) => {
+          //   setSearchKeyword(e.target.value);
+          // }, 1000)}
+          onKeyDown={(e) => {
+            switch (e.key) {
+              case "ArrowUp":
+                break;
+              case "ArrowDown":
+                break;
+              case "Enter":
+                setSearchKeyword(e.target.value);
+                // setGeneSuggestions([]);
+                // if(searchKeyword.includes('chr')) {
+                //     hmRef.current.api.zoomTo(searchKeyword);
+                // } else {
+                //     hmRef.current.api.zoomToGene(searchKeyword);
+                // }
+                break;
+              case "Esc":
+              case "Escape":
+                break;
+            }
+          }}
+        />
+        <h5>Navigation</h5>
+        <input
+          // ref={searchBoxRef}
+          className={"search-box"}
+          type="text"
+          name="default name"
+          placeholder={"chr6:151690496-152103274"}
+          onKeyDown={(e) => {
+            switch (e.key) {
+              case "ArrowUp":
+                break;
+              case "ArrowDown":
+                break;
+              case "Enter":
+                setNaviKeyword(e.target.value);
+                // setGeneSuggestions([]);
+                // if(searchKeyword.includes('chr')) {
+                //     hmRef.current.api.zoomTo(searchKeyword);
+                // } else {
+                //     hmRef.current.api.zoomToGene(searchKeyword);
+                // }
+                break;
+              case "Esc":
+              case "Escape":
+                break;
+            }
+          }}
         />
         <h5>Chromosomes</h5>
         {[...Array.from(Array(22).keys()).map((d) => d + 1), "X", "Y"].map(
@@ -155,7 +240,7 @@ function App(props) {
             >{`chr${k}`}</span>
           )
         )}
-        <h5>Genes</h5>
+        {/* <h5>Genes</h5>
         <div className="gene-button" onClick={() => onZoom("TP53", "chr17")}>
           TP53
         </div>
@@ -165,34 +250,32 @@ function App(props) {
         <div className="gene-button" onClick={() => onZoom("MYC", "chr8")}>
           MYC
         </div>
-        <div className="gene-button">...</div>
-        <h5>Expernal Links</h5>
-        <div
-          className="gene-button"
-          onClick={() =>
-            window.open(
-              `http://dc2.cistrome.org/api/batchview/h/${searchKeyword
-                .split(",")
-                .join("_")}/w/`,
-              "_blank"
-            )
-          }
-        >
-          Wash U Browser
-        </div>
-        <div
-          className="gene-button"
-          onClick={() =>
-            window.open(
-              `http://dc2.cistrome.org/api/batchview/h/${searchKeyword
-                .split(",")
-                .join("_")}/u/`,
-              "_blank"
-            )
-          }
-        >
-          UCSC Browser
-        </div>
+        <div className="gene-button">...</div> */}
+        <h5>
+          {"Putative Targets "}
+          <a
+            className="sub-info"
+            href={`http://dc2.cistrome.org/api/putative_target_ng?gene=&id=${searchKeyword}`}
+          >
+            Raw Data
+          </a>
+        </h5>
+        {putativeTargets
+          ?.filter((t) => t.symbol === t.symbol.toUpperCase() || true)
+          .slice(0, 10)
+          ?.map((t) => {
+            // console.log(t);
+            // {coordinate: "chr13:40931923-41061385", symbol: "ELF1", score: "3.131", visual_coordinate: "chr13:40831923-41161385"}
+            return (
+              <div
+                className="gene-button"
+                onClick={() => onZoomPos(t.visual_coordinate)}
+                key={t.symbol}
+              >
+                {t.symbol}
+              </div>
+            );
+          })}
       </div>
       <div className="metadata-table">
         <h5>Inspector</h5>
@@ -231,13 +314,56 @@ function App(props) {
           </tr>
           <tr>
             <td>Paper</td>
-            <td><a href={metadata?.treats?.[0]?.link} target="_blank" rel="noopener noreferrer">{metadata?.treats?.[0]?.paper__reference}</a></td>
+            <td>
+              <a
+                href={metadata?.treats?.[0]?.link}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {metadata?.treats?.[0]?.paper__reference}
+              </a>
+            </td>
           </tr>
           <tr>
             <td>Raw Data</td>
-            <td><a href={`http://dc2.cistrome.org/api/inspector?id=${metadata?.id}`} target="_blank" rel="noopener noreferrer">{'JSON'}</a></td>
+            <td>
+              <a
+                href={`http://dc2.cistrome.org/api/inspector?id=${metadata?.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {"JSON"}
+              </a>
+            </td>
           </tr>
         </table>
+        <h5>Expernal Links</h5>
+        <div
+          className="gene-button"
+          onClick={() =>
+            window.open(
+              `http://dc2.cistrome.org/api/batchview/h/${searchKeyword
+                .split(",")
+                .join("_")}/w/`,
+              "_blank"
+            )
+          }
+        >
+          Wash U Browser
+        </div>
+        <div
+          className="gene-button"
+          onClick={() =>
+            window.open(
+              `http://dc2.cistrome.org/api/batchview/h/${searchKeyword
+                .split(",")
+                .join("_")}/u/`,
+              "_blank"
+            )
+          }
+        >
+          UCSC Browser
+        </div>
       </div>
     </>
   );
